@@ -10,14 +10,14 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 make: *** No rule to make target `all'.  Stop.
 
 
-# Make data base, printed on Thu Jul 28 23:49:07 2022
+# Make data base, printed on Mon Aug  1 19:33:39 2022
 
 # Variables
 
 # automatic
+ 
 <D = $(patsubst %/,%,$(dir $<))
 # automatic
- 
 ?F = $(notdir $?)
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
@@ -48,7 +48,7 @@ ELECTRON_RUN_AS_NODE = 1
 # default
 .FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
 # environment
-SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.u3amVsGh3w/Listeners
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.IjjO6sTI7S/Listeners
 # automatic
 %F = $(notdir $%)
 # environment
@@ -90,7 +90,7 @@ MAKE_VERSION := 3.81
 # environment
 USER = 3uchris
 # makefile
-.DEFAULT_GOAL := 
+.DEFAULT_GOAL := postgres
 # automatic
 %D = $(patsubst %/,%,$(dir $%))
 # default
@@ -103,6 +103,7 @@ TMPDIR = /var/folders/by/9_d_2wfj5315b_wszrh_zy5w0000gn/T/
 *F = $(notdir $*)
 # environment
 VSCODE_IPC_HOOK = /Users/3uchris/Library/Application Support/Code/1.69.2-main.sock
+ 
 # environment
 MallocNanoZone = 0
 # makefile
@@ -140,9 +141,9 @@ MAKELEVEL := 0
 # environment
 LANG = C
 # environment
-VSCODE_PID = 72827
+VSCODE_PID = 82252
 # variable set hash-table stats:
-# Load=63/1024=6%, Rehash=0, Collisions=1/85=1%
+# Load=63/1024=6%, Rehash=0, Collisions=1/86=1%
 
 # Pattern-specific Variable Values
 
@@ -150,7 +151,7 @@ VSCODE_PID = 72827
 
 # Directories
 
-# . (device 16777230, inode 17037650): 10 files, no impossibilities.
+# . (device 16777232, inode 17037650): 10 files, no impossibilities.
 
 # 10 files, no impossibilities in 1 directories.
 
@@ -160,6 +161,15 @@ VSCODE_PID = 72827
 
 # Files
 
+postgres:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 2):
+	docker run --name postgres12 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
+	
+
 # Not a target:
 all:
 #  Command-line target.
@@ -167,8 +177,12 @@ all:
 #  File does not exist.
 #  File has not been updated.
 # variable set hash-table stats:
- 
 # Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+.PHONY: postgres createdb dropdb migrateup migratedown
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 .SUFFIXES:
@@ -176,14 +190,24 @@ all:
 #  Modification time never checked.
 #  File has not been updated.
 
+ 
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-07-28 23:49:02
+#  Last modified 2022-07-29 00:17:50
 #  File has been updated.
 #  Successfully updated.
 # variable set hash-table stats:
 # Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+createdb:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 4):
+	docker exec -it postgres12 createdb --username=root --owner=root BankProject
+	
 
 # Not a target:
 .DEFAULT:
@@ -191,8 +215,35 @@ Makefile:
 #  Modification time never checked.
 #  File has not been updated.
 
+dropdb:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 7):
+	docker exec -it postgres12 dropdb BankProject
+	
+
+migrateup:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 10):
+	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/BankProject?sslmode=disable" -verbose up
+	
+
+migratedown:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 13):
+	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/BankProject?sslmode=disable" -verbose down
+	
+
 # files hash-table stats:
-# Load=4/1024=0%, Rehash=0, Collisions=0/16=0%
+# Load=10/1024=1%, Rehash=0, Collisions=0/27=0%
 # VPATH Search Paths
 
 # No `vpath' search paths.
@@ -204,6 +255,6 @@ Makefile:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Thu Jul 28 23:49:07 2022
+# Finished Make data base on Mon Aug  1 19:33:39 2022
 
  
