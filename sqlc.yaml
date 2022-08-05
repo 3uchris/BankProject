@@ -1,4 +1,4 @@
-version: "1"
+version: 1
 packages:
   - name: "db"
     path: "./db/sqlc"
@@ -7,5 +7,5 @@ packages:
     engine: "postgresql"
     emit_json_tags: true
     emit_prepared_queries: false
-    emit interface: false
+    emit_interface: false
     emit_exact_table_names: false
