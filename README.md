@@ -27,6 +27,11 @@ There are serveal ways to implement CURD operations in Golang
 4.SQLC
 (Very fast&easy to use, and more importantly idiomatic Golang CURD codes will be automatically generated, and it also catches SQL query errors before generating codes, yet it has full support on postgres, and MySQL is still experimental)
 
-In this project, SQLC library will be used! 1.You write SQL queries
+In this project, SQLC library will be used! 
+1.You write SQL queries
 2.You run sqlc to generate Go code that presents type-safe interfaces to those queries
 3.You write application code that calls the methods sqlc generated
+
+I will write unit test for those CURD operation, to see whether the automatcally generated code works.
+all those unit test will be wrote in the sqlc folder: account_test.go, entry_test.go, and transfer.test.go
+in order to write teh test, we have to set up the connection and the Queries object first , and we write a main_test.go
