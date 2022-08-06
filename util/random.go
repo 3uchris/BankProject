@@ -4,8 +4,6 @@ import (
 	"math/rand"
 	"strings"
 	"time"
-
-	"golang.org/x/text/currency"
 )
 
 const alphabet = "abcdefghijklmnopqrstuvwxyz"
