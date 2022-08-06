@@ -35,3 +35,5 @@ In this project, SQLC library will be used!
 I will write unit test for those CURD operation, to see whether the automatcally generated code works.
 all those unit test will be wrote in the sqlc folder: account_test.go, entry_test.go, and transfer.test.go
 in order to write teh test, we have to set up the connection and the Queries object first , and we write a main_test.go
+
+we create folder "util" and we are gonna create a better way to generate test data instead of filling them manually as what we did for the create account arguement, we create a random.go. It is very important if we have a column with unique constrain in the database.
