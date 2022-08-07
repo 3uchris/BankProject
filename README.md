@@ -27,10 +27,16 @@ There are serveal ways to implement CURD operations in Golang
 4.SQLC
 (Very fast&easy to use, and more importantly idiomatic Golang CURD codes will be automatically generated, and it also catches SQL query errors before generating codes, yet it has full support on postgres, and MySQL is still experimental)
 
+
+
+
 In this project, SQLC library will be used! 
 1.You write SQL queries
 2.You run sqlc to generate Go code that presents type-safe interfaces to those queries
 3.You write application code that calls the methods sqlc generated
+
+
+
 
 --Golang Unit test
 I will write unit test for those CURD operation, to see whether the automatcally generated code works.
@@ -38,6 +44,9 @@ all those unit test will be wrote in the sqlc folder: account_test.go, entry_tes
 in order to write teh test, we have to set up the connection and the Queries object first , and we write a main_test.go
 
 we create folder "util" and we are gonna create a better way to generate test data instead of filling them manually as what we did for the create account arguement, we create a random.go. It is very important if we have a column with unique constrain in the database.
+
+
+
 
 --Golang DB Transaction(combines some operations from several tables)
 Database Transaction is a single unit of work, that often made up of multiple database operations.
@@ -48,3 +57,6 @@ We use database transaction, because (1)to provide a reliable and consistent uni
 ACID property:(1)Atomicity:Either all operations complete successfully or the transaction fails and the db is unchanged.(2)Consistency:The db state must be valid after the transaction. All constraints must be statisfied. (3)Isolation:Concurrent transaction must not affect each other.(4)Durability: Data written by a successful transaction must be recorded in persistent storage.
 
 we start a transaction with the BEGIN statement, then we write a series of normal SQL queries, if all the transaction is successful, we COMMIT the transaction to make it permanent, ROLLBACK the transaction otherwise.
+
+DB transaction and handle deadlock in Golang: Test-Driven Development(TDD)
+We write tests first to make our current code breaks, then we gradually improve the code until the tests pass.
