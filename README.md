@@ -60,3 +60,5 @@ we start a transaction with the BEGIN statement, then we write a series of norma
 
 DB transaction and handle deadlock in Golang: Test-Driven Development(TDD)
 We write tests first to make our current code breaks, then we gradually improve the code until the tests pass.
+
+we detect deadlock, and we print out some logs to see which transaction is calling which query and in which order.
