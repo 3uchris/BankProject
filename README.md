@@ -63,4 +63,16 @@ We write tests first to make our current code breaks, then we gradually improve 
 
 we detect deadlock, and we print out some logs to see which transaction is calling which query and in which order. fixed the deadlock issue caused by the foreign key constraints.
 
+(way to avoid deadlock)
 The best defense against deadlocks is to avoid them by making sure that our application always acquire locks in a consistent order.
+
+(level of isolation)
+while working with database transactions, one crucial thing we must do is to choose an appropriate isolation level for our application. There is a well-defined standard, each database engine might choose to implement it in a different way, and thus may behave differently in each isolation level. How each level of isolation work in MySQL and Postgres by running concrete SQL queries: A perfect isolation ensures that all concurrent transactions will not affect each other 
+
+(Continuous Integration/CI)
+is an important part of software development process where a shared code repository is continously changing due to new work of a team member being integrated into it. In order to reduce potenial errors, each integraton is usually verified by an automated build and test process. And In this project, we setup that process using Github Action to automatically build and run unit tests(Golang + Postgres)
+1.Define a workflow: workflow is an automated procedure that can be triggered by three different ways: (1)event that happens on the Github repository, (2)by setting a repetitive schedule, (3)manually click the run workflow button on the repository UI.
+2.Add a .YML file to repository
+3.specify a Runner, a runner is a server that listens for available jobs, it runs one job at a time , and reports progress, logs and result to github
+4. A job is a set of steps that will executed on the same runner, normally jobs run in parallel
+5.steps are individual tasks that run serially, one after another within a job
