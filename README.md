@@ -1,78 +1,188 @@
-# BankProject
-Design, develop and deploy a backend system that has operations of a bank from scratch using PostgreSQL, Golang and Docker.
+[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/golang-migrate/migrate/CI/master)](https://github.com/golang-migrate/migrate/actions/workflows/ci.yaml?query=branch%3Amaster)
+[![GoDoc](https://pkg.go.dev/badge/github.com/golang-migrate/migrate)](https://pkg.go.dev/github.com/golang-migrate/migrate/v4)
+[![Coverage Status](https://img.shields.io/coveralls/github/golang-migrate/migrate/master.svg)](https://coveralls.io/github/golang-migrate/migrate?branch=master)
+[![packagecloud.io](https://img.shields.io/badge/deb-packagecloud.io-844fec.svg)](https://packagecloud.io/golang-migrate/migrate?filter=debs)
+[![Docker Pulls](https://img.shields.io/docker/pulls/migrate/migrate.svg)](https://hub.docker.com/r/migrate/migrate/)
+![Supported Go Versions](https://img.shields.io/badge/Go-1.16%2C%201.17-lightgrey.svg)
+[![GitHub Release](https://img.shields.io/github/release/golang-migrate/migrate.svg)](https://github.com/golang-migrate/migrate/releases)
+[![Go Report Card](https://goreportcard.com/badge/github.com/golang-migrate/migrate)](https://goreportcard.com/report/github.com/golang-migrate/migrate)
 
+# migrate
 
-The operations:
-    1.Create and manage accounts that compose of owners, balances and currency
-    2.Record all balance changes(create an account entry record for each change)
-    3.Money transfer transaction(perform money transfer between two accounts consistently within a transaction)
-  
- 
-    Step 1: Database Design:
-    Tools that I uses: Docker, TablePlus
-    * Design SQL database schema using dbdiagram.io
-    * Automatically generate SQL code to create the schema in a target database engine: PostgreSQL/MySQL/SQL Server
+__Database migrations written in Go. Use as [CLI](#cli-usage) or import as [library](#use-in-your-go-project).__
 
-we use homebrew to download golang-migrate and use command     migrate create -ext sql -dir db/migration -seq init_schema   to create two migration files(one is up, one is down), the up-script is to make a forward change to the schema, and the down-script is to revert the changes made by the up-script.
+* Migrate reads migrations from [sources](#migration-sources)
+   and applies them in correct order to a [database](#databases).
+* Drivers are "dumb", migrate glues everything together and makes sure the logic is bulletproof.
+   (Keeps the drivers lightweight, too.)
+* Database drivers don't assume things or try to correct user input. When in doubt, fail.
 
-We generate the CURD Golang code, and CREATE is to insert new record to the databse, READ is to select or to search a records in the dataabse, UPDATE is to change some fields of the record in the database, and DELETE is to remove records from database.
+Forked from [mattes/migrate](https://github.com/mattes/migrate)
 
-There are serveal ways to implement CURD operations in Golang
-1.use a low-level standard library database/sql package  
-(We use the QueryRowContext()function, and pass in the raw SQL query and some parameters, then we scan the result into target variables. Pros: very fast and straightforward. Cons: manually mapping SQL fields to variables which is easy to make mistakes, the errors will only show up in rum time )
-2.use a High-level object-relational-mapping libarary GORM in Golang
-(CURD functions already implemented, which results in short production code, the only issue is that we need to learn how to writes queries using gorm's porvided funcitons, and it runs very slow if the traffic is high )
-3.The middle-way approach: SQLX library
-(Quit fast& easy to use, and fields mapping via query text&struct tags, yet the errors won't show up until runtime)
-4.SQLC
-(Very fast&easy to use, and more importantly idiomatic Golang CURD codes will be automatically generated, and it also catches SQL query errors before generating codes, yet it has full support on postgres, and MySQL is still experimental)
+## Databases
 
+Database drivers run migrations. [Add a new database?](database/driver.go)
 
+* [PostgreSQL](database/postgres)
+* [PGX](database/pgx)
+* [Redshift](database/redshift)
+* [Ql](database/ql)
+* [Cassandra](database/cassandra)
+* [SQLite](database/sqlite)
+* [SQLite3](database/sqlite3) ([todo #165](https://github.com/mattes/migrate/issues/165))
+* [SQLCipher](database/sqlcipher)
+* [MySQL/ MariaDB](database/mysql)
+* [Neo4j](database/neo4j)
+* [MongoDB](database/mongodb)
+* [CrateDB](database/crate) ([todo #170](https://github.com/mattes/migrate/issues/170))
+* [Shell](database/shell) ([todo #171](https://github.com/mattes/migrate/issues/171))
+* [Google Cloud Spanner](database/spanner)
+* [CockroachDB](database/cockroachdb)
+* [ClickHouse](database/clickhouse)
+* [Firebird](database/firebird)
+* [MS SQL Server](database/sqlserver)
 
+### Database URLs
 
-In this project, SQLC library will be used! 
-1.You write SQL queries
-2.You run sqlc to generate Go code that presents type-safe interfaces to those queries
-3.You write application code that calls the methods sqlc generated
+Database connection strings are specified via URLs. The URL format is driver dependent but generally has the form: `dbdriver://username:password@host:port/dbname?param1=true&param2=false`
 
+Any [reserved URL characters](https://en.wikipedia.org/wiki/Percent-encoding#Percent-encoding_reserved_characters) need to be escaped. Note, the `%` character also [needs to be escaped](https://en.wikipedia.org/wiki/Percent-encoding#Percent-encoding_the_percent_character)
 
+Explicitly, the following characters need to be escaped:
+`!`, `#`, `$`, `%`, `&`, `'`, `(`, `)`, `*`, `+`, `,`, `/`, `:`, `;`, `=`, `?`, `@`, `[`, `]`
 
+It's easiest to always run the URL parts of your DB connection URL (e.g. username, password, etc) through an URL encoder. See the example Python snippets below:
 
---Golang Unit test
-I will write unit test for those CURD operation, to see whether the automatcally generated code works.
-all those unit test will be wrote in the sqlc folder: account_test.go, entry_test.go, and transfer.test.go
-in order to write teh test, we have to set up the connection and the Queries object first , and we write a main_test.go
+```bash
+$ python3 -c 'import urllib.parse; print(urllib.parse.quote(input("String to encode: "), ""))'
+String to encode: FAKEpassword!#$%&'()*+,/:;=?@[]
+FAKEpassword%21%23%24%25%26%27%28%29%2A%2B%2C%2F%3A%3B%3D%3F%40%5B%5D
+$ python2 -c 'import urllib; print urllib.quote(raw_input("String to encode: "), "")'
+String to encode: FAKEpassword!#$%&'()*+,/:;=?@[]
+FAKEpassword%21%23%24%25%26%27%28%29%2A%2B%2C%2F%3A%3B%3D%3F%40%5B%5D
+$
+```
 
-we create folder "util" and we are gonna create a better way to generate test data instead of filling them manually as what we did for the create account arguement, we create a random.go. It is very important if we have a column with unique constrain in the database.
+## Migration Sources
 
+Source drivers read migrations from local or remote sources. [Add a new source?](source/driver.go)
 
+* [Filesystem](source/file) - read from filesystem
+* [io/fs](source/iofs) - read from a Go [io/fs](https://pkg.go.dev/io/fs#FS)
+* [Go-Bindata](source/go_bindata) - read from embedded binary data ([jteeuwen/go-bindata](https://github.com/jteeuwen/go-bindata))
+* [pkger](source/pkger) - read from embedded binary data ([markbates/pkger](https://github.com/markbates/pkger))
+* [GitHub](source/github) - read from remote GitHub repositories
+* [GitHub Enterprise](source/github_ee) - read from remote GitHub Enterprise repositories
+* [Bitbucket](source/bitbucket) - read from remote Bitbucket repositories
+* [Gitlab](source/gitlab) - read from remote Gitlab repositories
+* [AWS S3](source/aws_s3) - read from Amazon Web Services S3
+* [Google Cloud Storage](source/google_cloud_storage) - read from Google Cloud Platform Storage
 
+## CLI usage
 
---Golang DB Transaction(combines some operations from several tables)
-Database Transaction is a single unit of work, that often made up of multiple database operations.
+* Simple wrapper around this library.
+* Handles ctrl+c (SIGINT) gracefully.
+* No config search paths, no config files, no magic ENV var injections.
 
-In this case, we firstly create a transfer record with specific amount, and create two entries for account1 and account2, and subtract and add the specific amount to the two accounts.
+__[CLI Documentation](cmd/migrate)__
 
-We use database transaction, because (1)to provide a reliable and consistent unit of work, even in case of system failure (2)To provide isolation between programs that access the database concurrently
-ACID property:(1)Atomicity:Either all operations complete successfully or the transaction fails and the db is unchanged.(2)Consistency:The db state must be valid after the transaction. All constraints must be statisfied. (3)Isolation:Concurrent transaction must not affect each other.(4)Durability: Data written by a successful transaction must be recorded in persistent storage.
+### Basic usage
 
-we start a transaction with the BEGIN statement, then we write a series of normal SQL queries, if all the transaction is successful, we COMMIT the transaction to make it permanent, ROLLBACK the transaction otherwise.
+```bash
+$ migrate -source file://path/to/migrations -database postgres://localhost:5432/database up 2
+```
 
-DB transaction and handle deadlock in Golang: Test-Driven Development(TDD)
-We write tests first to make our current code breaks, then we gradually improve the code until the tests pass.
+### Docker usage
 
-we detect deadlock, and we print out some logs to see which transaction is calling which query and in which order. fixed the deadlock issue caused by the foreign key constraints.
+```bash
+$ docker run -v {{ migration dir }}:/migrations --network host migrate/migrate
+    -path=/migrations/ -database postgres://localhost:5432/database up 2
+```
 
-(way to avoid deadlock)
-The best defense against deadlocks is to avoid them by making sure that our application always acquire locks in a consistent order.
+## Use in your Go project
 
-(level of isolation)
-while working with database transactions, one crucial thing we must do is to choose an appropriate isolation level for our application. There is a well-defined standard, each database engine might choose to implement it in a different way, and thus may behave differently in each isolation level. How each level of isolation work in MySQL and Postgres by running concrete SQL queries: A perfect isolation ensures that all concurrent transactions will not affect each other 
+* API is stable and frozen for this release (v3 & v4).
+* Uses [Go modules](https://golang.org/cmd/go/#hdr-Modules__module_versions__and_more) to manage dependencies.
+* To help prevent database corruptions, it supports graceful stops via `GracefulStop chan bool`.
+* Bring your own logger.
+* Uses `io.Reader` streams internally for low memory overhead.
+* Thread-safe and no goroutine leaks.
 
-(Continuous Integration/CI)
-is an important part of software development process where a shared code repository is continously changing due to new work of a team member being integrated into it. In order to reduce potenial errors, each integraton is usually verified by an automated build and test process. And In this project, we setup that process using Github Action to automatically build and run unit tests(Golang + Postgres)
-1.Define a workflow: workflow is an automated procedure that can be triggered by three different ways: (1)event that happens on the Github repository, (2)by setting a repetitive schedule, (3)manually click the run workflow button on the repository UI.
-2.Add a .YML file to repository
-3.specify a Runner, a runner is a server that listens for available jobs, it runs one job at a time , and reports progress, logs and result to github
-4. A job is a set of steps that will executed on the same runner, normally jobs run in parallel
-5.steps are individual tasks that run serially, one after another within a job
+__[Go Documentation](https://godoc.org/github.com/golang-migrate/migrate)__
+
+```go
+import (
+    "github.com/golang-migrate/migrate/v4"
+    _ "github.com/golang-migrate/migrate/v4/database/postgres"
+    _ "github.com/golang-migrate/migrate/v4/source/github"
+)
+
+func main() {
+    m, err := migrate.New(
+        "github://mattes:personal-access-token@mattes/migrate_test",
+        "postgres://localhost:5432/database?sslmode=enable")
+    m.Steps(2)
+}
+```
+
+Want to use an existing database client?
+
+```go
+import (
+    "database/sql"
+    _ "github.com/lib/pq"
+    "github.com/golang-migrate/migrate/v4"
+    "github.com/golang-migrate/migrate/v4/database/postgres"
+    _ "github.com/golang-migrate/migrate/v4/source/file"
+)
+
+func main() {
+    db, err := sql.Open("postgres", "postgres://localhost:5432/database?sslmode=enable")
+    driver, err := postgres.WithInstance(db, &postgres.Config{})
+    m, err := migrate.NewWithDatabaseInstance(
+        "file:///migrations",
+        "postgres", driver)
+    m.Up() // or m.Step(2) if you want to explicitly set the number of migrations to run
+}
+```
+
+## Getting started
+
+Go to [getting started](GETTING_STARTED.md)
+
+## Tutorials
+
+* [CockroachDB](database/cockroachdb/TUTORIAL.md)
+* [PostgreSQL](database/postgres/TUTORIAL.md)
+
+(more tutorials to come)
+
+## Migration files
+
+Each migration has an up and down migration. [Why?](FAQ.md#why-two-separate-files-up-and-down-for-a-migration)
+
+```bash
+1481574547_create_users_table.up.sql
+1481574547_create_users_table.down.sql
+```
+
+[Best practices: How to write migrations.](MIGRATIONS.md)
+
+## Versions
+
+Version | Supported? | Import | Notes
+--------|------------|--------|------
+**master** | :white_check_mark: | `import "github.com/golang-migrate/migrate/v4"` | New features and bug fixes arrive here first |
+**v4** | :white_check_mark: | `import "github.com/golang-migrate/migrate/v4"` | Used for stable releases |
+**v3** | :x: | `import "github.com/golang-migrate/migrate"` (with package manager) or `import "gopkg.in/golang-migrate/migrate.v3"` (not recommended) | **DO NOT USE** - No longer supported |
+
+## Development and Contributing
+
+Yes, please! [`Makefile`](Makefile) is your friend,
+read the [development guide](CONTRIBUTING.md).
+
+Also have a look at the [FAQ](FAQ.md).
+
+---
+
+Looking for alternatives? [https://awesome-go.com/#database](https://awesome-go.com/#database).
