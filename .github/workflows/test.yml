@@ -1,4 +1,4 @@
-name: ci-test
+name: Run unit tests
 
 on:
   push:
@@ -14,11 +14,11 @@ jobs:
 
     services:
       postgres:
-        image: postgres:12
+        image: postgres:14-alpine
         env:
           POSTGRES_USER: root
           POSTGRES_PASSWORD: secret
-          POSTFRES_DB: BankProject
+          POSTGRES_DB: simple_bank
         ports:
           - 5432:5432
         options: >-
@@ -26,21 +26,22 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
     steps:
 
     - name: Set up Go 1.x
-      uses: actions/setup-go@v3
+      uses: actions/setup-go@v2
       with:
-        go-version: 1.18
+        go-version: ^1.18
       id: go
 
     - name: Check out code into the Go module directory
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
 
     - name: Install golang-migrate
       run: |
-        curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.2/migrate.linux-arm64.tar.gz | tar xvz
-        sudo mv migrate.linux-arm64 /usr/bin/migrate
+        curl -L https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz | tar xvz
+        sudo mv migrate.linux-amd64 /usr/bin/migrate
         which migrate
 
     - name: Run migrations
