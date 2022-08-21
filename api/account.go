@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	db "github.com/3uchris/BankProject/db/sqlc"
+	"github.com/3uchris/BankProject/db/sqlc"
 	"github.com/gin-gonic/gin"
 )
 
