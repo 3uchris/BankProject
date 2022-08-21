@@ -2,7 +2,6 @@ package api
 
 import (
 	"database/sql"
-	"errors"
 	"net/http"
 
 	db "github.com/3uchris/BankProject/db/sqlc"
@@ -42,7 +41,7 @@ type getAccountRequest struct {
 }
 
 func (server *Server) getAccount(ctx *gin.Context) {
-	var req createAccountRequest
+	var req getAccountRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
@@ -59,4 +58,29 @@ func (server *Server) getAccount(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, account)
+}
+
+type listAccountRequest struct {
+	pageID   int32 `form:"page_id" binding:"required,min=1"`
+	pageSize int32 `form:"page_size" binding:"required,min=5,max=10"`
+}
+
+func (server *Server) listAccount(ctx *gin.Context) {
+	var req listAccountRequest
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	arg := db.ListAccountsParams{
+		Limit:  req.pageSize,
+		Offset: (req.pageID - 1) * req.pageSize,
+	}
+	accounts, err := server.store.ListAccounts(ctx, arg)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, accounts)
 }

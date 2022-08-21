@@ -1,11 +1,8 @@
 package main
 
 import (
-	"context"
 	"database/sql"
 	"log"
-	"net"
-	"net/http"
 
 	"github.com/3uchris/BankProject/api"
 	db "github.com/3uchris/BankProject/db/sqlc"
