@@ -7,7 +7,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 
 # This program built for i386-apple-darwin11.3.0
 
-# Make data base, printed on Fri Aug 19 22:08:28 2022
+# Make data base, printed on Sun Aug 21 18:59:30 2022
 
 # Variables
 
@@ -70,7 +70,7 @@ HOME = /Users/3uchris
 # default
 MAKEFILEPATH := /Applications/Xcode.app/Contents/Developer/Makefiles
 # environment
-VSCODE_CODE_CACHE_PATH = /Users/3uchris/Library/Application Support/Code/CachedData/6d9b74a70ca9c7733b29f0456fd8195364076dda
+VSCODE_CODE_CACHE_PATH = /Users/3uchris/Library/Application Support/Code/CachedData/e4503b30fc78200f846c62cf8091b76ff5547662
 # environment
 LOGNAME = 3uchris
 # environment
@@ -104,7 +104,7 @@ TMPDIR = /var/folders/by/9_d_2wfj5315b_wszrh_zy5w0000gn/T/
 # automatic
 *F = $(notdir $*)
 # environment
-VSCODE_IPC_HOOK = /Users/3uchris/Library/Application Support/Code/1.70.1-main.sock
+VSCODE_IPC_HOOK = /Users/3uchris/Library/Application Support/Code/1.70.2-main.sock
 # environment
 MallocNanoZone = 0
 # makefile
@@ -114,7 +114,7 @@ MFLAGS = -Rrqp
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
 # environment
-XPC_SERVICE_NAME = application.com.microsoft.VSCode.18104311.18104317
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.18743675.18743681
 # environment
 HOMEBREW_PREFIX = /opt/homebrew
 # automatic
@@ -142,7 +142,7 @@ MAKELEVEL := 0
 # environment
 LANG = C
 # environment
-VSCODE_PID = 90503
+VSCODE_PID = 53316
 # variable set hash-table stats:
 # Load=66/1024=6%, Rehash=0, Collisions=2/89=2%
 
@@ -152,9 +152,9 @@ VSCODE_PID = 90503
 
 # Directories
 
-# . (device 16777230, inode 17037650): 16 files, no impossibilities.
+# . (device 16777230, inode 17037650): 19 files, no impossibilities.
 
-# 16 files, no impossibilities in 1 directories.
+# 19 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -180,7 +180,7 @@ all:
 # variable set hash-table stats:
 # Load=0/32=0%, Rehash=0, Collisions=0/0=0%
 
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc test
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc test server
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -203,11 +203,20 @@ sqlc:
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-08-05 21:23:12
+#  Last modified 2022-08-20 18:41:01
 #  File has been updated.
 #  Successfully updated.
 # variable set hash-table stats:
 # Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+server:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 23):
+	go run main.go
+	
 
 test:
 #  Phony target (prerequisite of .PHONY).
@@ -261,7 +270,7 @@ migratedown:
 	
 
 # files hash-table stats:
-# Load=12/1024=1%, Rehash=0, Collisions=0/31=0%
+# Load=13/1024=1%, Rehash=0, Collisions=0/33=0%
 # VPATH Search Paths
 
 # No `vpath' search paths.
@@ -273,7 +282,7 @@ migratedown:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Fri Aug 19 22:08:28 2022
+# Finished Make data base on Sun Aug 21 18:59:30 2022
 
  
 make: *** No rule to make target `all'.  Stop.
