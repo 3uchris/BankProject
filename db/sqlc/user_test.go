@@ -37,7 +37,6 @@ func TestCreateUser(t *testing.T) {
 }
 
 func TestGetUser(t *testing.T) {
-	//create account
 	user1 := createRandomUser(t)
 	user2, err := testQueries.GetUser(context.Background(), user1.Username)
 	require.NoError(t, err)
