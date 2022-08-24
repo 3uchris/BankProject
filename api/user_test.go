@@ -179,7 +179,6 @@ func TestCreateUserAPI(t *testing.T) {
 
 			store := mockdb.NewMockStore(ctrl)
 			tc.buildStubs(store)
-
 			server := newTestServer(t, store)
 			recorder := httptest.NewRecorder()
 
@@ -194,10 +193,11 @@ func TestCreateUserAPI(t *testing.T) {
 			server.router.ServeHTTP(recorder, request)
 			tc.checkResponse(recorder)
 		})
+
 	}
 }
 
-/* func TestLoginUserAPI(t *testing.T) {
+func TestLoginUserAPI(t *testing.T) {
 	user, password := randomUser(t)
 
 	testCases := []struct {
@@ -217,9 +217,6 @@ func TestCreateUserAPI(t *testing.T) {
 					GetUser(gomock.Any(), gomock.Eq(user.Username)).
 					Times(1).
 					Return(user, nil)
-				store.EXPECT().
-					CreateSession(gomock.Any(), gomock.Any()).
-					Times(1)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -317,7 +314,7 @@ func TestCreateUserAPI(t *testing.T) {
 			tc.checkResponse(recorder)
 		})
 	}
-} */
+}
 
 func randomUser(t *testing.T) (user db.User, password string) {
 	password = util.RandomString(6)

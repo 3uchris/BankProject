@@ -20,15 +20,12 @@ import (
 
 func TestTransferAPI(t *testing.T) {
 	amount := int64(10)
-
 	user1, _ := randomUser(t)
 	user2, _ := randomUser(t)
 	user3, _ := randomUser(t)
-
 	account1 := randomAccount(user1.Username)
 	account2 := randomAccount(user2.Username)
 	account3 := randomAccount(user3.Username)
-
 	account1.Currency = util.USD
 	account2.Currency = util.USD
 	account3.Currency = util.EUR
@@ -54,7 +51,6 @@ func TestTransferAPI(t *testing.T) {
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().GetAccount(gomock.Any(), gomock.Eq(account1.ID)).Times(1).Return(account1, nil)
 				store.EXPECT().GetAccount(gomock.Any(), gomock.Eq(account2.ID)).Times(1).Return(account2, nil)
-
 				arg := db.TransferTxParams{
 					FromAccountID: account1.ID,
 					ToAccountID:   account2.ID,
@@ -269,17 +265,13 @@ func TestTransferAPI(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
-
 			store := mockdb.NewMockStore(ctrl)
 			tc.buildStubs(store)
-
 			server := newTestServer(t, store)
 			recorder := httptest.NewRecorder()
-
 			// Marshal body data to JSON
 			data, err := json.Marshal(tc.body)
 			require.NoError(t, err)
-
 			url := "/transfers"
 			request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(data))
 			require.NoError(t, err)
