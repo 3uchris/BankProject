@@ -38,7 +38,6 @@ func TestCreateAccount(t *testing.T) {
 }
 
 func TestGetAccount(t *testing.T) {
-	//create account
 	account1 := createRandomAccount(t)
 	account2, err := testQueries.GetAccount(context.Background(), account1.ID)
 	require.NoError(t, err)
@@ -81,7 +80,7 @@ func TestDeleteAccount(t *testing.T) {
 	require.Empty(t, account2)
 }
 
-func TestListAccount(t *testing.T) {
+func TestListAccounts(t *testing.T) {
 	var lastAccount Account
 	for i := 0; i < 10; i++ {
 		lastAccount = createRandomAccount(t)

@@ -17,7 +17,7 @@ func createRandomEntry(t *testing.T, account Account) Entry {
 
 	entry, err := testQueries.CreateEntry(context.Background(), arg)
 	require.NoError(t, err)
-	require.NotEmpty(t, account)
+	require.NotEmpty(t, entry)
 
 	require.Equal(t, arg.AccountID, entry.AccountID)
 	require.Equal(t, arg.Amount, entry.Amount)
@@ -34,7 +34,6 @@ func TestCreateEntry(t *testing.T) {
 }
 
 func TestGetEntry(t *testing.T) {
-	//create account
 	account := createRandomAccount(t)
 	entry1 := createRandomEntry(t, account)
 	entry2, err := testQueries.GetEntry(context.Background(), entry1.ID)
