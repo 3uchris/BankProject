@@ -5,7 +5,7 @@ INSERT INTO accounts (
   currency
 ) VALUES (
   $1, $2, $3
-)RETURNING *;
+) RETURNING *;
 
 -- name: GetAccount :one
 SELECT * FROM accounts
@@ -25,13 +25,13 @@ OFFSET $3;
 
 -- name: UpdateAccount :one
 UPDATE accounts
-set balance = $2
+SET balance = $2
 WHERE id = $1
 RETURNING *;
 
 -- name: AddAccountBalance :one
 UPDATE accounts
-set balance = balance + sqlc.arg(amount)
+SET balance = balance + sqlc.arg(amount)
 WHERE id = sqlc.arg(id)
 RETURNING *;
 
