@@ -197,7 +197,7 @@ func TestCreateUserAPI(t *testing.T) {
 	}
 }
 
-func TestLoginUserAPI(t *testing.T) {
+/* func TestLoginUserAPI(t *testing.T) {
 	user, password := randomUser(t)
 
 	testCases := []struct {
@@ -317,7 +317,7 @@ func TestLoginUserAPI(t *testing.T) {
 			tc.checkResponse(recorder)
 		})
 	}
-}
+} */
 
 func randomUser(t *testing.T) (user db.User, password string) {
 	password = util.RandomString(6)
