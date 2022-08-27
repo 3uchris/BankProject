@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bank-project-ingress
+spec:
+  rules:
+  - host: "api.bank-service.link"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: bank-project-api-service
+            port:
+              number: 80
