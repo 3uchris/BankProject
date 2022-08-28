@@ -41,16 +41,4 @@ This is a backend web service for a bank. It will provide APIs for the frontend 
 * Automatic deploy to Kubernetes with Github Action 
   <br/><br/>
   <br/><br/>
-# Local Setup
-### Migrate
-```
-brew install golang-migrate
-```
-### Gomock
-```
-go install github.com/golang/mock/mockgen@v1.6.0
-```
-### SQLC
-```
-brew install sqlc
-```
+
